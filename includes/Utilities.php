@@ -32,7 +32,7 @@ class Utilities {
                 ?>
             </div>
             <div class="event-content">
-                <h3>
+                <span class="event-heading">
                     <?php if (!empty($event->EventId)): ?>
                         <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
                            target="_blank">                                
@@ -52,7 +52,7 @@ class Utilities {
                             </svg>
                         </a>
                     <?php endif; ?>
-                </h3>
+                </span>
                 <?php 
                 if (!empty($event->HashTableEntry)): 
                     foreach ($event->HashTableEntry as $entry):

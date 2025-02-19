@@ -72,6 +72,10 @@ usort($upcoming_events, function($a, $b) {
     margin: 0 auto;
     padding: 10px;
 }
+.event-heading{
+    font-size: 1.2em;
+    font-weight: bold;
+}
 
 .eventor-event {
     position: relative;
@@ -98,10 +102,6 @@ usort($upcoming_events, function($a, $b) {
     opacity: 0.8;
 }
 
-.event-content h3 {
-    margin: 0;
-    color: #333;
-}
 
 .event-organiser small{
     font-size: 0.9em;
@@ -146,7 +146,7 @@ usort($upcoming_events, function($a, $b) {
     position: relative;
     font-size: 0.9em;
     color: #666;
-    margin: 8px 0 8px 24px;
+    margin: 0 0 8px 24px;
     line-height: 1.4;
 }
 
