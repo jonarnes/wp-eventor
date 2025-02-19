@@ -1,0 +1,12 @@
+{
+  "name": "eventor-integration",
+  "version": "1.0.0",
+  "description": "Eventor Integration WordPress Plugin",
+  "scripts": {
+    "build": "wp-scripts build assets/js/blocks/events-block.js --output-path=assets/js/blocks/build",
+    "start": "wp-scripts start assets/js/blocks/events-block.js --output-path=assets/js/blocks/build"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^26.0.0"
+  }
+} 
