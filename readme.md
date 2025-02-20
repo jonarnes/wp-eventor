@@ -1,6 +1,6 @@
 # Eventor Integration
 
-This plugin integrates Eventor.no with WordPress and displays events in a custom Gutenberg block or using a shortcode.
+This plugin integrates eventor.orientering.no with WordPress and displays events in a custom Gutenberg block or using a shortcode.
 
 ## Features
 
