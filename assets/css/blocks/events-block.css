@@ -1,0 +1,198 @@
+/* ----------------------------------------
+   Base styles - Common for all layouts
+---------------------------------------- */
+.eventor-timeline {
+    position: relative;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.eventor-event {
+    position: relative;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.eventor-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.eventor-event.featured {
+    background: #f8f8f8;
+    border-left: 4px solid #4CAF50;
+}
+
+.eventor-event.past {
+    opacity: 0.8;
+}
+
+/* Event organizer styles */
+.event-organiser {
+    color: #666;
+    margin: 0 0 3px 0;
+}
+
+.event-organiser small {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 3px 0;
+}
+
+/* Map link styles */
+.event-map-link {
+    display: inline-block;
+    margin-left: 8px;
+    color: #666;
+    text-decoration: none;
+    vertical-align: text-bottom;
+}
+
+.event-map-link:hover {
+    color: #4CAF50;
+}
+
+.map-icon {
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.event-map-link:hover .map-icon {
+    transform: scale(1.1);
+}
+
+/* Message styles */
+.event-message {
+    position: relative;
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 8px 24px;
+    line-height: 1.4;
+}
+
+.message-arrow {
+    position: absolute;
+    left: -16px;
+    top: -2px;
+    transform: scale(0.8);
+}
+
+/* Message expand/collapse buttons */
+.expand-message, 
+.collapse-message {
+    background: none;
+    border: none;
+    color: #4CAF50;
+    padding: 0;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: underline;
+}
+
+/* Animation */
+.message-full {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* No events message */
+.eventor-event.no-events {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+    background: #f8f8f8;
+}
+
+.eventor-event.no-events p {
+    margin: 0;
+}
+
+/* ----------------------------------------
+   Rich Layout Styles
+---------------------------------------- */
+.eventor-timeline.layout-rich {
+    max-width: 100%;
+}
+
+.eventor-timeline.layout-rich .eventor-event {
+    margin: 12px 0;
+    padding: 12px;
+}
+
+.eventor-timeline.layout-rich .event-content {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.eventor-timeline.layout-rich .event-content img {
+    width: 40px;
+    height: auto;
+    margin-top: 4px;
+}
+
+.eventor-timeline.layout-rich .event-content-text {
+    flex: 1;
+}
+
+.eventor-timeline.layout-rich .event-content .event-heading {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+/* ----------------------------------------
+   Dense Layout Styles
+---------------------------------------- */
+.eventor-timeline.layout-dense {
+    max-width: 100%;
+    font-size: 0.9em;
+    padding: 0;
+}
+
+.eventor-timeline.layout-dense .eventor-event {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: none;
+}
+.eventor-timeline.layout-dense .eventor-event:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.eventor-timeline.layout-dense .event-organiser {
+    font-size: 0.9em;
+}
+
+.eventor-timeline.layout-dense .event-content .event-heading {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 4px 0;
+}
+
+.eventor-timeline.layout-dense .event-message {
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+.eventor-timeline.layout-dense .event-map-link {
+    padding: 2px 4px;
+}
+
+/* ----------------------------------------
+   Responsive Styles
+---------------------------------------- */
+@media (max-width: 600px) {
+    .eventor-event {
+        margin-left: 0;
+    }
+}
