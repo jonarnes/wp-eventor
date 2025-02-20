@@ -87,18 +87,23 @@ class EventorIntegration {
     public function init() {
         // Load block editor assets
         add_action('init', [$this, 'register_block_assets']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
         
         // Initialize the block with plugin instance
         $block = new \EventorIntegration\Blocks\EventorEventsBlock($this);
         $block->init();
-        
-        // ... rest of your init code ...
+    }
+
+    public function enqueue_frontend_assets() {
+        wp_enqueue_style(
+            'eventor-events-block',
+            EVENTOR_INTEGRATION_PLUGIN_URL . 'assets/css/blocks/events-block.css',
+            [],
+            EVENTOR_INTEGRATION_VERSION
+        );
     }
 
     public function register_block_assets() {
-        // Add this to debug
-        error_log('Registering block assets');
-        
         // Register block editor style
         wp_register_style(
             'eventor-events-block-editor',

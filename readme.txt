@@ -61,9 +61,10 @@ Yes, you can enter multiple organization IDs separated by commas in the settings
 3. Gutenberg block
 
 == Changelog ==
+= 1.0.2 =
+* Layout can now be set to "dense" or "rich"
 
-= 1.0.0 =
-* Initial release
+= 1.0.1 =
 * Events list with past and upcoming events
 * Map integration
 * Configurable settings

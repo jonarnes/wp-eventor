@@ -19,6 +19,18 @@ class AdminPage {
     }
 
     public function register_settings() {
+        // Add layout setting
+        register_setting(
+            'eventor_integration_options',
+            'eventor_integration_default_layout',
+            [
+                'type' => 'string',
+                'default' => 'rich',
+                'sanitize_callback' => function($value) {
+                    return in_array($value, ['rich', 'dense']) ? $value : 'rich';
+                }
+            ]
+        );
         // Add a callback when settings are updated
         foreach (['api_key', 'organisation_ids', 'days_back', 'days_forward', 'past_events_count'] as $setting) {
             register_setting(

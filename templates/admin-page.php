@@ -88,6 +88,25 @@
                     </p>
                 </td>
             </tr>
+            <tr>
+                <th scope="row">
+                    <label for="eventor_integration_default_layout"><?php esc_html_e('Default Layout', 'eventor-integration'); ?></label>
+                </th>
+                <td>
+                    <select id="eventor_integration_default_layout" 
+                            name="eventor_integration_default_layout">
+                        <option value="rich" <?php selected(get_option('eventor_integration_default_layout', 'rich'), 'rich'); ?>>
+                            <?php esc_html_e('Rich (Full width with details)', 'eventor-integration'); ?>
+                        </option>
+                        <option value="dense" <?php selected(get_option('eventor_integration_default_layout', 'rich'), 'dense'); ?>>
+                            <?php esc_html_e('Dense (Compact list)', 'eventor-integration'); ?>
+                        </option>
+                    </select>
+                    <p class="description">
+                        <?php esc_html_e('Choose the default layout style for event listings', 'eventor-integration'); ?>
+                    </p>
+                </td>
+            </tr>
         </table>
 
         <?php submit_button(); ?>

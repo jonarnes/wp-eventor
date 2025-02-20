@@ -5,7 +5,8 @@ const {
     PanelBody, 
     TextControl, 
     RangeControl,
-    __experimentalNumberControl: NumberControl 
+    __experimentalNumberControl: NumberControl,
+    SelectControl
 } = wp.components;
 
 registerBlockType('eventor-integration/events', {
@@ -34,6 +35,10 @@ registerBlockType('eventor-integration/events', {
         pastEventsCount: {
             type: 'number',
             default: 0
+        },
+        layout: {
+            type: 'string',
+            default: '' // Empty means use default from admin settings
         }
     },
     
@@ -47,6 +52,17 @@ registerBlockType('eventor-integration/events', {
                         title={__('Event Settings', 'eventor-integration')}
                         initialOpen={true}
                     >
+                        <SelectControl
+                            label={__('Layout Style', 'eventor-integration')}
+                            value={attributes.layout}
+                            options={[
+                                { label: __('Use Default', 'eventor-integration'), value: '' },
+                                { label: __('Rich (Full width with details)', 'eventor-integration'), value: 'rich' },
+                                { label: __('Dense (Compact list)', 'eventor-integration'), value: 'dense' }
+                            ]}
+                            onChange={(value) => setAttributes({ layout: value })}
+                            help={__('Override the default layout style', 'eventor-integration')}
+                        />
                         <TextControl
                             label={__('Organisation IDs', 'eventor-integration')}
                             help={__('Override default organisation IDs (comma-separated)', 'eventor-integration')}

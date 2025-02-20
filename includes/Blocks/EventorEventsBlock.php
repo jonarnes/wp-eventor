@@ -31,9 +31,17 @@ class EventorEventsBlock {
             EVENTOR_INTEGRATION_VERSION
         );
 
+        wp_register_style(
+            'eventor-events-block',
+            EVENTOR_INTEGRATION_PLUGIN_URL . 'assets/css/blocks/events-block.css',
+            [],
+            EVENTOR_INTEGRATION_VERSION
+        );
+
         register_block_type('eventor-integration/events', [
             'editor_script' => 'eventor-events-block-editor',
             'editor_style'  => 'eventor-events-block-editor',
+            'style'         => 'eventor-events-block',
             'attributes' => [
                 'organisationIds' => [
                     'type' => 'string',
@@ -50,6 +58,10 @@ class EventorEventsBlock {
                 'pastEventsCount' => [
                     'type' => 'number',
                     'default' => 0
+                ],
+                'layout' => [
+                    'type' => 'string',
+                    'default' => ''
                 ]
             ],
             'render_callback' => function($attributes) {
@@ -66,6 +78,9 @@ class EventorEventsBlock {
                 }
                 if (isset($attributes['pastEventsCount'])) {
                     $converted_atts['past_events_count'] = $attributes['pastEventsCount'];
+                }
+                if (isset($attributes['layout'])) {
+                    $converted_atts['layout'] = $attributes['layout'];
                 }
                 
                 return $this->plugin->render_events_shortcode($converted_atts);

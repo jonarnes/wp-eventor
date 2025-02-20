@@ -32,11 +32,12 @@ class Plugin {
             'days_back' => get_option('eventor_integration_days_back', 30),
             'days_forward' => get_option('eventor_integration_days_forward', 90),
             'past_events_count' => get_option('eventor_integration_past_events_count', 1),
+            'layout' => get_option('eventor_integration_default_layout', 'rich'),
         ], $atts);
 
         try {
             // Only override defaults if values are actually provided (not 0 or empty)
-            $params = [];
+            $params = $attributes;
             
             if (!empty($attributes['organisation_ids'])) {
                 $params['organisation_ids'] = $attributes['organisation_ids'];
