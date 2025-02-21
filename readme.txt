@@ -27,6 +27,10 @@ Eventor Integration allows you to display events from Eventor (Norwegian Oriente
 Use either the Gutenberg block "Eventor Events" or the shortcode:
 `[eventor_events]`
 
+```
+[eventor_events organisation_ids="13" days_back="60" layout="rich" past_events_count="1" days_forward="90"]
+```
+
 = Requirements =
 
 * WordPress 5.0 or higher
@@ -61,6 +65,9 @@ Yes, you can enter multiple organization IDs separated by commas in the settings
 3. Gutenberg block
 
 == Changelog ==
+= 1.0.4 =
+* short code now supports params like the block editor
+
 = 1.0.3 =
 * bump version
 
