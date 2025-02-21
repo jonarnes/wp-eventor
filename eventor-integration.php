@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Eventor Integration
- * Plugin URI: https://github.com/jonarnes/eventor-integration
+ * Plugin URI: https://github.com/jonarnes/wp-eventor
  * Description: Integration with Eventor API for displaying orienteering event data
- * Version: 1.0.0
+ * Version: 1.0.3
  * Author: Jon Arne Stæterås
  * Author URI: https://ijas.no
  * License: GPL v2 or later

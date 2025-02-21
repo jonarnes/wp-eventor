@@ -58,3 +58,8 @@ Your organization ID can be found in Eventor when logged in as an administrator.
 Yes, you can enter multiple organization IDs separated by commas in the settings.
 
 
+# Free to use
+
+The license is [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+
+<a href="https://www.buymeacoffee.com/jonarnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

@@ -2,7 +2,7 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     
     <?php //settings_errors(); ?>
-
+    <p>The API key and organisation ID are required for the plugin to work. Other settings are defaults and can be overridden in the block editor settings panel.</p>
     <form action="options.php" method="post">
         <?php
         settings_fields('eventor_integration_options');
@@ -39,7 +39,7 @@
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="eventor_integration_days_back"><?php esc_html_e('Days to look back', 'eventor-integration'); ?></label>
+                    <label for="eventor_integration_days_back"><?php esc_html_e('Days to look back to be able to display past events', 'eventor-integration'); ?></label>
                 </th>
                 <td>
                     <input type="number" 
@@ -56,7 +56,7 @@
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="eventor_integration_days_forward"><?php esc_html_e('Days to look forward', 'eventor-integration'); ?></label>
+                    <label for="eventor_integration_days_forward"><?php esc_html_e('Days to look forward to be able to display upcoming events', 'eventor-integration'); ?></label>
                 </th>
                 <td>
                     <input type="number" 
@@ -123,3 +123,4 @@
         <?php submit_button(__('Clear Organization Cache', 'eventor-integration'), 'secondary'); ?>
     </form>
 </div> 
+<p><a href="https://www.buymeacoffee.com/jonarnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a></p>

@@ -61,6 +61,9 @@ Yes, you can enter multiple organization IDs separated by commas in the settings
 3. Gutenberg block
 
 == Changelog ==
+= 1.0.3 =
+* bump version
+
 = 1.0.2 =
 * Layout can now be set to "dense" or "rich"
 
