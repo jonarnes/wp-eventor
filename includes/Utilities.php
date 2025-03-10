@@ -6,9 +6,83 @@ class Utilities {
         if (empty($position) || empty($position['x']) || empty($position['y'])) {
             return false;
         }
+        
         $longitude = $position['x'];
         $latitude = $position['y'];
         return "https://www.google.com/maps?q={$latitude},{$longitude}";
+    }
+
+    /**
+     * Render a single event in detail view
+     * 
+     * @param object $event Event data
+     * @param object $api API instance
+     * @return void
+     */
+    public static function render_single_event($event, $api) {
+        // Get organization data if available
+        $organizer = null;
+        
+        if (!empty($event->Organiser->Organisation->OrganisationId)) {
+            $organizer = $api->get_organisation((int)$event->Organiser->Organisation->OrganisationId);
+        }
+
+        // Format the event date
+        $event_date = date_i18n(
+            'j. M Y - H:i', 
+            strtotime($event->StartDate->Date . ' ' . $event->StartDate->Clock)
+        );
+
+        // Get coordinates-based maps URL if available
+        $maps_url = '';
+        if (!empty($event->EventRace)) {
+            $attrs = $event->EventRace->EventCenterPosition->attributes();
+            if (!empty($attrs)) {
+                $position = [
+                    'x' => (string)$attrs->x,
+                    'y' => (string)$attrs->y
+                ];
+                $maps_url = self::get_google_maps_link($position);
+            }
+        }
+
+        // Get event documents
+        $documents = [];
+        try {
+            $xml = $api->get_event_documents($event->EventId);
+            
+            if (isset($xml->Document) && count($xml->Document) > 0) {
+                foreach ($xml->Document as $doc) {
+                    $attrs = $doc->attributes();
+                    $documents[] = [
+                        'id' => (string)$attrs->id,
+                        'name' => (string)$attrs->name,
+                        'url' => (string)$attrs->url,
+                        'type' => (string)$attrs->type,
+                        'modifyDate' => date_i18n(
+                            get_option('date_format'), 
+                            strtotime((string)$attrs->modifyDate)
+                        )
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently handle the error - documents will remain empty
+        }
+
+        // Get Eventor message if available
+        $eventor_message = '';
+        if (!empty($event->HashTableEntry)) {
+            foreach ($event->HashTableEntry as $entry) {
+                if ((string)$entry->Key === 'Eventor_Message') {
+                    $eventor_message = (string)$entry->Value;
+                    break;
+                }
+            }
+        }
+
+        // Include the template
+        include EVENTOR_INTEGRATION_PLUGIN_DIR . 'templates/partials/single-event-card.php';
     }
 
     public static function render_event($event, $api, $event_type = '') {

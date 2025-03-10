@@ -65,6 +65,9 @@ Yes, you can enter multiple organization IDs separated by commas in the settings
 3. Gutenberg block
 
 == Changelog ==
+= 1.0.5 =
+* Added single event view using short code
+
 = 1.0.4 =
 * short code now supports params like the block editor
 

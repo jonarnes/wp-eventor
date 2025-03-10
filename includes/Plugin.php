@@ -15,8 +15,14 @@ class Plugin {
             $this->admin->init();
         }
 
-        // Register shortcode with same parameters as block
+        // Add actions
+        add_action('init', [$this, 'register_shortcodes']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
+    }
+
+    public function register_shortcodes() {
         add_shortcode('eventor_events', [$this, 'render_events_shortcode']);
+        add_shortcode('eventor_event', [$this, 'render_single_event_shortcode']);
     }
 
     public function render_events_shortcode($atts) {
@@ -61,5 +67,43 @@ class Plugin {
         } catch (\Exception $e) {
             return '<p class="error">' . esc_html__('Error fetching events:', 'eventor-integration') . ' ' . esc_html($e->getMessage()) . '</p>';
         }
+    }
+
+    public function render_single_event_shortcode($atts) {
+        $attributes = shortcode_atts([
+            'event_id' => 0,
+        ], $atts);
+
+        if (empty($attributes['event_id'])) {
+            return '<p class="error">' . esc_html__('Event ID is required', 'eventor-integration') . '</p>';
+        }
+
+        try {
+            $event = $this->api->get_single_event($attributes['event_id']);
+            if (!$event) {
+                return '<p class="error">' . esc_html__('Event not found', 'eventor-integration') . '</p>';
+            }
+
+            ob_start();
+            include EVENTOR_INTEGRATION_PLUGIN_DIR . 'templates/single-event.php';
+            return ob_get_clean();
+        } catch (\Exception $e) {
+            return '<p class="error">' . esc_html__('Error fetching event:', 'eventor-integration') . ' ' . esc_html($e->getMessage()) . '</p>';
+        }
+    }
+
+    public function enqueue_styles() {
+        // Generate the CSS content
+        ob_start();
+        include EVENTOR_INTEGRATION_PLUGIN_DIR . 'templates/styles/single-event-styles.php';
+        $css = ob_get_clean();
+
+        // Add the CSS inline
+        wp_register_style('eventor-integration-styles', false);
+        wp_enqueue_style('eventor-integration-styles');
+        wp_add_inline_style('eventor-integration-styles', $css);
+
+        // Enqueue dashicons for the icons
+        wp_enqueue_style('dashicons');
     }
 } 

@@ -41,24 +41,44 @@ class EventorAPI {
      * @return object Organization data
      */
     public function get_organisation($org_id) {
+        error_log('Getting organization data for ID: ' . $org_id);
+        
         // Generate a unique transient key for this organization
         $cache_key = 'eventor_org_' . $org_id;
         
         // Try to get cached data
-        $org_name = get_transient($cache_key) ;
+        $org_data = get_transient($cache_key);
         
-        // If no cached data, fetch from API and cache it
-        if ($org_name === false) {
+        // Handle old cache format (string) or missing data
+        if ($org_data === false || is_string($org_data)) {
+            error_log('No cached data found or old format, fetching from API');
             $endpoint = 'organisation/' . $org_id;
-            $org_data = $this->make_request($endpoint);
-            if ($org_data && !empty($org_data->Name)) {
-                $org_name = (string)$org_data->Name;
-                // Cache for 7 days (organization data rarely changes)
-                set_transient($cache_key, $org_name, 7 * DAY_IN_SECONDS);
+            try {
+                $xml_data = $this->make_request($endpoint);
+                error_log('API response: ' . print_r($xml_data, true));
+                if ($xml_data) {
+                    $org_data = (object)[
+                        'Name' => (string)$xml_data->Name,
+                        'WebURL' => (string)$xml_data->WebURL
+                    ];
+                    error_log('Organization data created: ' . print_r($org_data, true));
+                    // Cache for 7 days (organization data rarely changes)
+                    set_transient($cache_key, $org_data, 7 * DAY_IN_SECONDS);
+                }
+            } catch (\Exception $e) {
+                error_log('Error fetching organization data: ' . $e->getMessage());
+                return null;
             }
+        } else if (is_string($org_data)) {
+            // Convert old format to new format
+            $org_data = (object)[
+                'Name' => $org_data,
+                'WebURL' => ''
+            ];
         }
         
-        return (object)['Name' => $org_name];
+        error_log('Returning organization data: ' . print_r($org_data, true));
+        return $org_data;
     }
 
     /**
@@ -74,6 +94,34 @@ class EventorAPI {
             $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_eventor_org_%'");
             $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_eventor_org_%'");
         }
+    }
+
+    /**
+     * Get a single event by ID
+     * 
+     * @param int $event_id The event ID
+     * @return object|null Event data
+     */
+    public function get_single_event($event_id) {
+        $endpoint = 'event/' . $event_id;
+        
+        try {
+            $event = $this->make_request($endpoint);
+            return $event;
+        } catch (\Exception $e) {
+            error_log('Eventor API error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get documents for an event
+     *
+     * @param int $eventId The event ID
+     * @return SimpleXMLElement|false
+     */
+    public function get_event_documents($eventId) {
+        return $this->make_request('events/documents', ['eventIds' => (string)$eventId]);
     }
 
     private function make_request($endpoint, $params = []) {
