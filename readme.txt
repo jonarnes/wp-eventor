@@ -31,6 +31,8 @@ Use either the Gutenberg block "Eventor Events" or the shortcode:
 [eventor_events organisation_ids="13" days_back="60" layout="rich" past_events_count="1" days_forward="90"]
 ```
 
+To display a card with data about a single event, use `[eventor_event event_id="123"]`
+
 = Requirements =
 
 * WordPress 5.0 or higher

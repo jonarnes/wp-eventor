@@ -12,7 +12,13 @@ This plugin integrates eventor.orientering.no with WordPress and displays events
 
 ## Shortcode
 
-The shortcode is used to display the events list in a page or post: `[eventor-events]`
+The shortcode is used to display the events list in a page or post: `[eventor_events]`: 
+
+```
+[eventor_events organisation_ids="13" days_back="60" layout="rich" past_events_count="1" days_forward="90"]
+```
+
+To display a card with data about a single event, use `[eventor_event event_id="123"]`
 
 ## Gutenberg block
 
