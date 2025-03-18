@@ -33,237 +33,336 @@
    Single Event Card Styles
 ---------------------------------------- */
 .eventor-single-event {
+    --card-padding: clamp(1rem, 3vw, 2rem);
+    --border-radius: 16px;
+    --primary-color: var(--wp--preset--color--primary, #cccccc);
+    --text-color: var(--wp--preset--color--foreground, #1e1e1e);
+    --text-muted: #666;
+    --border-color: #eee;
+    
     margin: 2rem auto;
     max-width: 800px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-color);
 }
 
 .eventor-event-card {
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     overflow: hidden;
-    position: relative;
 }
 
+/* Header Styles */
 .eventor-card-header {
-    padding: 2rem 1.5rem 4rem;
-    text-align: center;
-    border-bottom: 1px solid #eee;
+    padding: var(--card-padding);
+    background: linear-gradient(to bottom, #f8f9fa, #fff);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.eventor-event-title {
-    margin: 0 0 1rem;
-    font-size: 2em;
+.event-header-content {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-top: 1rem;
 }
 
-.eventor-event-title a {
+.event-organizer-section {
+    flex-shrink: 0;
+}
+
+.organizer-logo-wrapper {
+    width: 60px;
+    height: 60px;
+}
+
+.organizer-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.event-title-section {
+    flex-grow: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.event-title {
+    margin: 0 0 0.5rem;
+    padding: 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    line-height: 1.2;
+}
+
+.event-classification,
+.event-race-distance {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    margin-left: 8px;
+    white-space: nowrap;
+}
+
+.event-classification {
+    background-color: var(--wp--preset--color--contrast-3, #f0f0f0);
+    color: var(--wp--preset--color--contrast-2, #505050);
+}
+
+.event-race-distance {
+    background-color: var(--wp--preset--color--accent-3, #e6f3ff);
+    color: var(--wp--preset--color--accent-2, #0073e6);
+}
+
+.event-classification .dashicons,
+.event-race-distance .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+}
+
+.event-title a {
     color: inherit;
     text-decoration: none;
 }
 
-.eventor-event-datetime {
-    color: #666;
+.event-title a:hover {
+    color: var(--primary-color);
+}
+
+.organizer-info {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+/* Body Styles */
+.eventor-card-body {
+    padding: var(--card-padding);
+}
+
+/* Event Message */
+.event-message {
     display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-}
-
-.eventor-card-logo {
-    width: 120px;
-    height: 120px;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%) translateY(calc(100% - 60px));
-    z-index: 2;
-    background: #fff;
-    border-radius: 50%;
-    padding: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.eventor-organizer-logo {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: contain;
-    background: #fff;
-    padding: 0.5em;
-}
-
-.eventor-card-content {
-    padding: 6rem 1.5rem 1.5rem;
-    position: relative;
-}
-
-.eventor-event-organizer {
-    text-align: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
     margin-bottom: 2rem;
 }
 
-.organizer-link {
-    color: var(--wp--preset--color--primary, #0073aa);
+.event-message p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 1.2em;
+}
+
+/* Details Grid */
+.event-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.detail-item .dashicons {
+    color: var(--primary-color);
+    opacity: 1;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.eventor-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
 }
 
-.eventor-action-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
+.eventor-link:hover {
+    text-decoration: underline;
+}
+
+.eventor-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* Documents Section */
+.event-documents {
     margin-bottom: 2rem;
 }
 
-.meta-action-button {
+.event-documents h3 {
+    font-size: 1.25em;
+    margin: 0 0 1rem;
+}
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.2s;
+}
+
+.document-item:hover {
+    background: #f0f0f0;
+}
+
+.document-name {
+    flex-grow: 1;
+    font-weight: 500;
+}
+
+.document-type {
+    font-size: 0.75em;
+    color: var(--text-muted);
+}
+
+/* Action Buttons */
+.event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.action-button {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 6px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.meta-action-button.primary {
-    background: var(--wp--preset--color--primary, #eee);
-    color: var(--wp--preset--color--background, #1e1e1e);
+.action-button:hover {
+    transform: translateY(-1px);
 }
 
-.meta-action-button.secondary {
-    background: var(--wp--preset--color--background, #fff);
-    color: var(--wp--preset--color--primary, #1e1e1e);
-    border: 1px solid currentColor;
+.action-button.primary {
+    background: var(--primary-color);
+    color: #000000;
 }
 
-.eventor-two-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin: 1rem 0;
+.action-button.primary:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.event-details-list,
-.documents-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.action-button.secondary {
+    background: #f8f9fa;
+    color: var(--text-color);
 }
 
-.event-details-list li,
-.documents-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+.action-button.secondary:hover {
+    background: #f0f0f0;
 }
 
-.event-details-list li:last-child,
-.documents-list li:last-child {
-    border-bottom: none;
+/* Footer */
+.event-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
 }
 
-.event-details-list strong {
-    color: #666;
-    display: block;
-    margin-bottom: 0.25rem;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.event-form-info {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    color: var(--text-muted);
+    font-size: 0.875em;
 }
 
-.documents-list a {
-    color: var(--wp--preset--color--primary, #1e1e1e);
-    text-decoration: none;
+/* Responsive Design */
+@media (max-width: 600px) {
+    .event-actions {
+        flex-direction: column;
+    }
+    
+    .action-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .event-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .documents-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .event-header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .organizer-logo-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    .event-title-section {
+        width: 100%;
+    }
+
+    .title-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .event-classification,
+    .event-race-distance {
+        margin-left: 0;
+    }
 }
 
-.document-type {
-    color: #666;
-    font-size: 0.85rem;
-}
-
-/* Common Components */
-.event-organiser {
-    color: #666;
-    margin: 0 0 3px 0;
-}
-
-.event-map-link {
-    display: inline-block;
-    margin-left: 8px;
-    color: #666;
-    text-decoration: none;
-    vertical-align: text-bottom;
-}
-
-.map-icon {
-    vertical-align: middle;
-}
-
-.event-message {
-    position: relative;
-    font-size: 0.9em;
-    color: #666;
-    margin: 0 0 8px 24px;
-    line-height: 1.4;
-}
-
-/* Event Message Bubble */
-.eventor-event-message {
-    position: absolute;
-    top: 90px;
-    right: 20px;
-    max-width: 280px;
-    background: #fff;
-    padding: 12px 16px;
-    border-radius: 16px;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    z-index: 3;
-}
-
-.eventor-event-message:before {
-    content: "";
-    position: absolute;
-    top: 30px;
-    right: 100%;
-    border: 8px solid transparent;
-    border-right-color: #eee;
-}
-
-.eventor-event-message:after {
-    content: "";
-    position: absolute;
-    top: 30px;
-    right: calc(100% - 1px);
-    border: 8px solid transparent;
-    border-right-color: #fff;
-}
-
-.message-content {
-    font-size: 0.9em;
-    line-height: 1.5;
-    color: #666;
-}
-
-.eventor-event-form {
-    margin-top: 1rem;
-    color: #666;
-}
-
+/* Utility Classes */
 .dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    line-height: 1;
-    opacity: 0.7;
-}
-
-.arena-name:after {
-    content: ",";
-    margin-right: 0.3em;
-}
-
-.arena-name:only-child:after {
-    content: none;
+    font-size: 1.25em;
+    width: 1.25em;
+    height: 1.25em;
 }
 
 /* ----------------------------------------
