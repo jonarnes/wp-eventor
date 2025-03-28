@@ -68,6 +68,11 @@ Yes, you can enter multiple organization IDs separated by commas in the settings
 
 == Changelog ==
 
+= 1.0.7 =
+* Added event classification
+* Support for multiple organizers and multi-day events in single event view.
+* Minor fixes
+
 = 1.0.6 =
 * Single event card layout change
 

@@ -95,7 +95,6 @@ class Plugin {
     public function enqueue_styles() {
         // Generate the CSS content
         ob_start();
-        include EVENTOR_INTEGRATION_PLUGIN_DIR . 'templates/styles/single-event-styles.php';
         $css = ob_get_clean();
 
         // Add the CSS inline

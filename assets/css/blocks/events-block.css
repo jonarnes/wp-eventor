@@ -69,19 +69,82 @@
 }
 
 .event-organizer-section {
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0; /* Prevent section from shrinking */
 }
 
+/* Dynamic width based on number of logos */
+.organizer-logos-stack {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px; /* Base width for single logo */
+    height: 80px;
+}
+
+/* Adjust width for multiple logos */
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(2)) { width: 120px; }
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(3)) { width: 140px; }
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(4)) { width: 160px; }
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(5)) { width: 180px; }
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(6)) { width: 200px; }
+.organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(7)) { width: 220px; }
+
 .organizer-logo-wrapper {
-    width: 60px;
-    height: 60px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s ease, z-index 0s;
+    z-index: 1;
+}
+
+/* Stack multiple logos with offset - first logo centered */
+.organizer-logo-wrapper:nth-child(1) { transform: translate(-50%, -50%); z-index: 7; }
+.organizer-logo-wrapper:nth-child(2) { transform: translate(-50%, -50%) translateX(-20px); z-index: 6; }
+.organizer-logo-wrapper:nth-child(3) { transform: translate(-50%, -50%) translateX(-40px); z-index: 5; }
+.organizer-logo-wrapper:nth-child(4) { transform: translate(-50%, -50%) translateX(-60px); z-index: 4; }
+.organizer-logo-wrapper:nth-child(5) { transform: translate(-50%, -50%) translateX(20px); z-index: 3; }
+.organizer-logo-wrapper:nth-child(6) { transform: translate(-50%, -50%) translateX(40px); z-index: 2; }
+.organizer-logo-wrapper:nth-child(7) { transform: translate(-50%, -50%) translateX(60px); z-index: 1; }
+
+.organizer-logo-wrapper:hover {
+    z-index: 10;
 }
 
 .organizer-logo {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.organizer-names {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--wp--preset--color--contrast-2, #505050);
+}
+
+.organizer-names a {
+    color: var(--wp--preset--color--accent-2, #0073e6);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.organizer-names a:hover {
+    color: var(--wp--preset--color--accent-1, #005bb8);
+    text-decoration: underline;
+}
+
+.organizer-info {
+    color: var(--text-muted);
+    font-size: 0.9em;
 }
 
 .event-title-section {
@@ -113,16 +176,8 @@
     font-size: 0.85em;
     margin-left: 8px;
     white-space: nowrap;
-}
-
-.event-classification {
     background-color: var(--wp--preset--color--contrast-3, #f0f0f0);
     color: var(--wp--preset--color--contrast-2, #505050);
-}
-
-.event-race-distance {
-    background-color: var(--wp--preset--color--accent-3, #e6f3ff);
-    color: var(--wp--preset--color--accent-2, #0073e6);
 }
 
 .event-classification .dashicons,
@@ -140,11 +195,6 @@
 
 .event-title a:hover {
     color: var(--primary-color);
-}
-
-.organizer-info {
-    color: var(--text-muted);
-    font-size: 0.9em;
 }
 
 /* Body Styles */
@@ -234,7 +284,6 @@
 .document-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 8px;
@@ -337,13 +386,25 @@
         gap: 1rem;
     }
 
-    .organizer-logo-wrapper {
-        width: 80px;
+    .event-organizer-section {
+        width: 100%;
+    }
+
+    .organizer-logos-stack {
+        width: 80px; /* Base width for single logo on mobile */
         height: 80px;
     }
 
+    /* Adjust width for multiple logos on mobile */
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(2)) { width: 96px; }
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(3)) { width: 112px; }
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(4)) { width: 128px; }
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(5)) { width: 144px; }
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(6)) { width: 160px; }
+    .organizer-logos-stack:has(.organizer-logo-wrapper:nth-child(7)) { width: 176px; }
+
     .event-title-section {
-        width: 100%;
+        max-width: 100%;
     }
 
     .title-row {
@@ -356,6 +417,15 @@
     .event-race-distance {
         margin-left: 0;
     }
+
+    /* Adjust offsets for smaller screens - first logo centered */
+    .organizer-logo-wrapper:nth-child(1) { transform: translate(-50%, -50%); z-index: 7; }
+    .organizer-logo-wrapper:nth-child(2) { transform: translate(-50%, -50%) translateX(-16px); z-index: 6; }
+    .organizer-logo-wrapper:nth-child(3) { transform: translate(-50%, -50%) translateX(-32px); z-index: 5; }
+    .organizer-logo-wrapper:nth-child(4) { transform: translate(-50%, -50%) translateX(-48px); z-index: 4; }
+    .organizer-logo-wrapper:nth-child(5) { transform: translate(-50%, -50%) translateX(16px); z-index: 3; }
+    .organizer-logo-wrapper:nth-child(6) { transform: translate(-50%, -50%) translateX(32px); z-index: 2; }
+    .organizer-logo-wrapper:nth-child(7) { transform: translate(-50%, -50%) translateX(48px); z-index: 1; }
 }
 
 /* Utility Classes */
@@ -397,6 +467,30 @@
     font-size: 1.3em;
     font-weight: bold;
     margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.eventor-timeline.layout-rich .event-classification,
+.eventor-timeline.layout-rich .event-race-distance {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background-color: #f0f0f0;
+    color: #505050;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: normal;
+}
+
+.eventor-timeline.layout-rich .event-classification .dashicons,
+.eventor-timeline.layout-rich .event-race-distance .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
 }
 
 /* ----------------------------------------
@@ -487,4 +581,69 @@
     .eventor-event-message:after {
         display: none;
     }
+}
+
+.event-races {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.race-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9em;
+    color: #666;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.race-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.race-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.race-location {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.race-location:hover {
+    color: #0073aa;
+}
+
+@media (max-width: 600px) {
+    .race-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+.event-web-url {
+    text-decoration: underline;
+    transition: background-color 0.2s ease;
+}
+
+.event-web-url:hover {
+    text-decoration: underline;
+}
+
+.expand-message,.collapse-message{
+    border:none;
+    background:none;
+    text-decoration:underline;
 }

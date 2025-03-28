@@ -1,6 +1,14 @@
 <?php
 namespace EventorIntegration\API;
 
+/** 
+ * https://eventor.orientering.no/api/competitorcount?organisationIds=303&eventids=20955
+ *  - hente antall deltakere på en bestemt arrangement
+ * 
+ * 
+*/
+
+
 class EventorAPI {
     private $api_url = 'https://eventor.orientering.no/api/';
     private $api_key;
@@ -18,8 +26,9 @@ class EventorAPI {
         $default_org_ids = get_option('eventor_integration_organisation_ids');
         
         // Use provided values or fall back to defaults
-        $days_back = $params['days_back'] ?? $default_days_back;
-        $days_forward = $params['days_forward'] ?? $default_days_forward;
+        // If days_back or days_forward is 0, use the default value
+        $days_back = (!empty($params['days_back']) && $params['days_back'] > 0) ? $params['days_back'] : $default_days_back;
+        $days_forward = (!empty($params['days_forward']) && $params['days_forward'] > 0) ? $params['days_forward'] : $default_days_forward;
         $org_ids = $params['organisation_ids'] ?? $default_org_ids;
         
         $query_params = [
@@ -29,7 +38,7 @@ class EventorAPI {
         ];
 
         // Debug the API request parameters
-        error_log('Eventor API request params: ' . print_r($query_params, true));
+        //error_log('Eventor API request params: ' . print_r($query_params, true));
 
         return $this->make_request($endpoint, $query_params);
     }
@@ -41,7 +50,7 @@ class EventorAPI {
      * @return object Organization data
      */
     public function get_organisation($org_id) {
-        error_log('Getting organization data for ID: ' . $org_id);
+        //error_log('Getting organization data for ID: ' . $org_id);
         
         // Generate a unique transient key for this organization
         $cache_key = 'eventor_org_' . $org_id;
@@ -51,17 +60,17 @@ class EventorAPI {
         
         // Handle old cache format (string) or missing data
         if ($org_data === false || is_string($org_data)) {
-            error_log('No cached data found or old format, fetching from API');
+            //error_log('No cached data found or old format, fetching from API');
             $endpoint = 'organisation/' . $org_id;
             try {
                 $xml_data = $this->make_request($endpoint);
-                error_log('API response: ' . print_r($xml_data, true));
+                //error_log('API response: ' . print_r($xml_data, true));
                 if ($xml_data) {
                     $org_data = (object)[
                         'Name' => (string)$xml_data->Name,
                         'WebURL' => (string)$xml_data->WebURL
                     ];
-                    error_log('Organization data created: ' . print_r($org_data, true));
+                    //error_log('Organization data created: ' . print_r($org_data, true));
                     // Cache for 7 days (organization data rarely changes)
                     set_transient($cache_key, $org_data, 7 * DAY_IN_SECONDS);
                 }
@@ -77,7 +86,7 @@ class EventorAPI {
             ];
         }
         
-        error_log('Returning organization data: ' . print_r($org_data, true));
+        //error_log('Returning organization data: ' . print_r($org_data, true));
         return $org_data;
     }
 

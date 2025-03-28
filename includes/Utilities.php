@@ -13,6 +13,25 @@ class Utilities {
     }
 
     /**
+     * Convert URLs in text to clickable links with truncation
+     * 
+     * @param string $text The text containing URLs
+     * @param int $max_length Maximum length for displayed URLs (default: 100)
+     * @return string Text with URLs converted to links
+     */
+    public static function convert_urls_to_links($text, $max_length = 100) {
+        return preg_replace_callback(
+            '/(https?:\/\/[^\s<>"\']+)/i',
+            function($matches) use ($max_length) {
+                $url = $matches[1];
+                $display_text = strlen($url) > $max_length ? substr($url, 0, $max_length) . '...' : $url;
+                return '<a href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($display_text) . '</a>';
+            },
+            trim($text)
+        );
+    }
+
+    /**
      * Render a single event in detail view
      * 
      * @param object $event Event data
@@ -29,8 +48,8 @@ class Utilities {
 
         // Format the event date
         $event_date = date_i18n(
-            'j. M Y - H:i', 
-            strtotime($event->StartDate->Date . ' ' . $event->StartDate->Clock)
+            'j. M Y', 
+            strtotime($event->StartDate->Date)
         );
 
         // Get coordinates-based maps URL if available
@@ -89,10 +108,26 @@ class Utilities {
         // Get the current layout from the template
         global $eventor_layout;
         $message_length = $eventor_layout === 'dense' ? 50 : 120;
+
+        // Get Eventor message if available
+        $eventor_message = '';
+        if (!empty($event->HashTableEntry)) {
+            foreach ($event->HashTableEntry as $entry) {
+                if ((string)$entry->Key === 'Eventor_Message') {
+                    $eventor_message = (string)$entry->Value;
+                    break;
+                }
+            }
+        }
         ?>
         <div class="eventor-event <?php echo esc_attr($event_type); ?>">
             <div class="event-organiser">
-                <?php echo esc_html(date('j. M Y', strtotime($event->StartDate->Date))); ?>: 
+                <?php 
+                echo esc_html(date('j. M Y', strtotime($event->StartDate->Date)));
+                if (!empty($event->FinishDate->Date) && (string)$event->FinishDate->Date !== (string)$event->StartDate->Date) {
+                    echo ' - ' . esc_html(date('j. M Y', strtotime($event->FinishDate->Date)));
+                }
+                ?>: 
                 <?php 
                 if (!empty($event->Organiser->OrganisationId)):
                     try {
@@ -139,6 +174,27 @@ class Utilities {
                         <?php if (!empty($event->EventId)): ?>
                             </a>
                         <?php endif; ?>
+                        <?php if (isset($event->EventClassificationId)): ?>
+                            <?php
+                            $classification = self::get_classification_translation($event->EventClassificationId);
+                            ?>
+                            <?php if (!empty($classification)): ?>
+                                <span class="event-classification">
+                                    <span class="dashicons dashicons-tag"></span>
+                                    <?php echo esc_html($classification); ?>
+                                </span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php 
+                        $races = $event->xpath('.//EventRace');
+                        if (count($races) === 1): ?>
+                            <span class="event-race-distance">
+                                <span class="dashicons dashicons-info"></span>
+                                <?php
+                                echo esc_html(self::get_race_distance_translation($races[0]->attributes()->raceDistance));
+                                ?>
+                            </span>
+                        <?php endif; ?>
                         <?php if (!empty($event->EventRace->EventCenterPosition['x']) && !empty($event->EventRace->EventCenterPosition['y'])): ?>
                             <a href="<?php echo esc_url(self::get_google_maps_link(['x' => (string)$event->EventRace->EventCenterPosition['x'], 'y' => (string)$event->EventRace->EventCenterPosition['y']])); ?>" 
                                class="event-map-link" 
@@ -164,16 +220,16 @@ class Utilities {
  <path d="M4 4V5.4C4 8.76031 4 10.4405 4.65396 11.7239C5.2292 12.8529 6.14708 13.7708 7.27606 14.346C8.55953 15 10.2397 15 13.6 15H20M20 15L15 10M20 15L15 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
  </svg>           
                                 <div class="message-short">
-                                    <?php echo trim(esc_html($short_message), ' \n\r\t\v\x00'); ?>
-                                    <?php if ($is_long): ?>
-                                        <button class="expand-message" aria-expanded="false">
+                                    <?php echo nl2br(esc_html(substr($eventor_message, 0, $message_length))); ?>
+                                    <?php if (strlen($eventor_message) > $message_length): ?>
+                                        ... <button class="expand-message" aria-expanded="false">
                                             <?php esc_html_e('mer...', 'eventor-integration'); ?>
                                         </button>
                                     <?php endif; ?>
                                 </div>
-                                <?php if ($is_long): ?>
+                                <?php if (strlen($eventor_message) > $message_length): ?>
                                     <div class="message-full" hidden>
-                                        <?php echo nl2br(esc_html($message)); ?>
+                                        <?php echo nl2br(self::convert_urls_to_links($eventor_message)); ?>
                                         <button class="collapse-message">
                                             <?php esc_html_e('minimér', 'eventor-integration'); ?>
                                         </button>
@@ -189,5 +245,45 @@ class Utilities {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Convert race distance type to Norwegian translation
+     * 
+     * @param string $race_distance The race distance type from Eventor
+     * @return string Translated race distance type
+     */
+    public static function get_race_distance_translation($race_distance) {
+        return match((string)($race_distance ?? 'Middle')) {
+            'Sprint' => __('Sprint', 'eventor-integration'),
+            'Middle' => __('Mellomdistanse', 'eventor-integration'),
+            'Long' => __('Langdistanse', 'eventor-integration'),
+            'UltraLong' => __('Ultralangdistanse', 'eventor-integration'),
+            'Night' => __('Nattløp', 'eventor-integration'),
+            'Relay' => __('Stafett', 'eventor-integration'),
+            'TrailO' => __('Precisjonsorientering', 'eventor-integration'),
+            'MTBO' => __('MTBO', 'eventor-integration'),
+            'SkiO' => __('Skiorientering', 'eventor-integration'),
+            default => __('Mellomdistanse', 'eventor-integration')
+        };
+    }
+
+    /**
+     * Convert event classification ID to Norwegian translation
+     * 
+     * @param int $classification_id The event classification ID from Eventor
+     * @return string Translated classification
+     */
+    public static function get_classification_translation($classification_id) {
+        return match((int)$classification_id) {
+            0 => __('Internasjonalt løp', 'eventor-integration'),
+            1 => __('Mesterskap', 'eventor-integration'),
+            2 => __('Nasjonalt arrangement', 'eventor-integration'),
+            3 => __('Kretsløp', 'eventor-integration'),
+            4 => __('Nærløp', 'eventor-integration'),
+            5 => __('Trening', 'eventor-integration'),
+            6 => __('Kvalifiseringsløp', 'eventor-integration'),
+            default => __('', 'eventor-integration')
+        };
     }
 } 

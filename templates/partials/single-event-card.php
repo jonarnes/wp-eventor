@@ -3,10 +3,38 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$org_logo_url = !empty($event->Organiser->Organisation->OrganisationId) ? 
-    'https://eventor.orientering.no/Organisation/Logotype/' . 
-    esc_attr($event->Organiser->Organisation->OrganisationId) . 
-    '?type=LargeIcon' : '';
+// Handle multiple organizers
+$organizers = array();
+if (!empty($event->Organiser)) {
+    //error_log('Organiser data: ' . print_r($event->Organiser, true));
+    //error_log('Organisation type: ' . gettype($event->Organiser->Organisation));
+    
+    // Check if Organisation is a SimpleXMLElement
+    if ($event->Organiser->Organisation instanceof \SimpleXMLElement) {
+        // Count the number of Organisation elements
+        $org_count = count($event->Organiser->Organisation);
+        //error_log('Number of organizations: ' . $org_count);
+        
+        if ($org_count > 1) {
+            // Multiple organizations
+            foreach ($event->Organiser->Organisation as $org) {
+                $organizers[] = array(
+                    'id' => (string)$org->OrganisationId,
+                    'name' => (string)$org->Name,
+                    'logo_url' => 'https://eventor.orientering.no/Organisation/Logotype/' . (string)$org->OrganisationId . '?type=LargeIcon',
+                );
+            }
+        } else {
+            // Single organization
+            $org = $event->Organiser->Organisation;
+            $organizers[] = array(
+                'id' => (string)$org->OrganisationId,
+                'name' => (string)$org->Name,
+                'logo_url' => 'https://eventor.orientering.no/Organisation/Logotype/' . (string)$org->OrganisationId . '?type=LargeIcon',
+            );
+        }
+    }
+}
 
 $is_future_event = strtotime($event->StartDate->Date) > time();
 
@@ -29,12 +57,17 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
             <div class="event-meta">
                 <time class="event-date">
                     <span class="dashicons dashicons-calendar-alt"></span>
-                    <?php echo esc_html($event_date); ?>
+                    <?php echo esc_html($event_date); 
+                    if (!empty($event->FinishDate->Date) && (string)$event->FinishDate->Date !== (string)$event->StartDate->Date) {
+                        echo ' - ' . esc_html(date('j. M Y', strtotime($event->FinishDate->Date)));
+                    }
+                    ?>
                 </time>
                 <?php if (!empty($event->EventRace->FirstStart)): ?>
                     <div class="event-time">
                         <span class="dashicons dashicons-clock"></span>
-                        <?php echo esc_html(date_i18n('H:i', strtotime($event->EventRace->FirstStart->Clock))); ?>
+                        <?php echo esc_html(date_i18n('H:i', strtotime($event->EventRace->FirstStart->Clock))); 
+                        ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -42,72 +75,125 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
             <div class="event-header-content">
                 <!-- Organizer Section -->
                 <div class="event-organizer-section">
-                    <?php if (isset($org_logo_url)): ?>
-                        <div class="organizer-logo-wrapper">
-                            <?php if (!empty($org_url)): ?>
-                                <a href="<?php echo esc_url($org_url); ?>" target="_blank" class="logo-link">
-                            <?php endif; ?>
-                            <img src="<?php echo esc_url($org_logo_url); ?>" 
-                                 alt="<?php echo esc_attr($org_name); ?>" 
-                                 class="organizer-logo"
-                                 onerror="this.style.display='none'">
-                            <?php if (!empty($org_url)): ?>
-                                </a>
-                            <?php endif; ?>
+                    <?php if (!empty($organizers)): ?>
+                        <div class="organizer-logos-stack">
+                            <?php foreach ($organizers as $index => $organizer): ?>
+                                <div class="organizer-logo-wrapper">
+                                    <img 
+                                        src="<?php echo esc_url($organizer['logo_url']); ?>" 
+                                        alt="<?php echo esc_attr($organizer['name']); ?>"
+                                        class="organizer-logo"
+                                    >
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
                 </div>
-
-                <?php if (!empty($event->Name)): ?>
-                    <div class="event-title-section">
-                    <?php if (!empty($org_name)): ?>
-                            <div class="organizer-info">
-                                <?php if (!empty($org_url)): ?>
-                                    <a href="<?php echo esc_url($org_url); ?>" target="_blank" class="organizer-name">
-                                        <?php echo esc_html($org_name); ?>:
-                                    </a>
-                                <?php else: ?>
-                                    <span class="organizer-name"><?php echo esc_html($org_name); ?>:</span>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="title-row">
-                            <h2 class="event-title">
-                                <?php if (!empty($event->EventId)): ?>
-                                    <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
-                                       target="_blank">
-                                        <?php echo esc_html($event->Name); ?>
-                                    </a>
-                                <?php else: ?>
-                                    <?php echo esc_html($event->Name); ?>
-                                <?php endif; ?>
-                            </h2>
-                            <?php if (!empty($event->EventClassificationId)): 
-                                $classification = match((int)$event->EventClassificationId) {
-                                    1 => __('Mesterskap', 'eventor-integration'),
-                                    2 => __('Nasjonalt arrangement', 'eventor-integration'),
-                                    3 => __('Kretsløp', 'eventor-integration'),
-                                    4 => __('Nærløp', 'eventor-integration'),
-                                    5 => __('Klubbløp', 'eventor-integration'),
-                                    6 => __('Kvalifiseringsløp', 'eventor-integration'),
-                                    default => $event->EventClassification ?? __('', 'eventor-integration')
-                                };
+                <div class="event-title-section">
+                    <div class="title-row">
+                        <h2 class="event-title">
+                            <?php if (!empty($event->EventId)): ?>
+                                <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
+                                   target="_blank">
+                            <?php endif; ?>
+                            <?php echo esc_html($event->Name); ?>
+                            <?php if (!empty($event->EventId)): ?>
+                                </a>
+                            <?php endif; ?>
+                        </h2>
+                        <?php if (isset($event->EventClassificationId)): ?>
+                            <?php
+                            $classification = \EventorIntegration\Utilities::get_classification_translation($event->EventClassificationId);
                             ?>
-                                <span class="event-classification">
+                            <?php if (!empty($classification)): ?>
+                                <?php if (!empty($event->WebURL)): ?>
+                                    <a href="<?php echo esc_url($event->WebURL); ?>" target="_blank" class="event-classification">
+                                <?php else: ?>
+                                    <span class="event-classification">
+                                <?php endif; ?>
                                     <span class="dashicons dashicons-tag"></span>
                                     <?php echo esc_html($classification); ?>
-                                </span>
+                                <?php if (!empty($event->WebURL)): ?>
+                                    </a>
+                                <?php else: ?>
+                                    </span>
+                                <?php endif; ?>
                             <?php endif; ?>
-                            <?php if (!empty($event->EventRace->attributes()->raceDistance)): ?>
-                                <span class="event-classification">
-                                    <span class="dashicons dashicons-info-outline"></span>
-                                    <?php echo esc_html((string)$event->EventRace->attributes()->raceDistance); ?>
-                                </span>
-                            <?php endif; ?>
-                        </div>
+                        <?php endif; ?>
+                        <?php 
+                        $races = $event->xpath('.//EventRace');
+                        if (count($races) === 1): ?>
+                            <span class="event-race-distance">
+                                <span class="dashicons dashicons-info"></span>
+                                <?php
+                                echo esc_html(\EventorIntegration\Utilities::get_race_distance_translation($races[0]->attributes()->raceDistance));
+                                ?>
+                            </span>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                    <div class="organizer-info">
+                        <?php 
+                        if (!empty($organizers)) {
+                            $organizer_links = array();
+                            foreach ($organizers as $organizer) {
+                                $organizer_links[] = esc_html($organizer['name']);    
+                            }
+                            echo implode(', ', $organizer_links);
+                        }
+                        ?>
+                        <?php if (!empty($event->WebURL)): ?>
+                            (<a href="<?php echo esc_url($event->WebURL); ?>" 
+                               target="_blank" 
+                               class="event-web-url">
+                                <?php 
+                                $parsedUrl = parse_url($event->WebURL);
+                                $domain = $parsedUrl['host'];
+                                esc_html_e($domain, 'eventor-integration'); ?>
+                               </a>)
+                        <?php endif; ?>
+
+                    </div>
+                    <?php 
+                    // Get all EventRace elements from the root level
+                    $races = $event->xpath('.//EventRace');
+                    if (count($races) > 1): ?>
+                        <div class="event-races">
+                            <?php foreach ($races as $race): ?>
+                                <div class="race-item">
+                                    <?php if (!empty($race->Name)): ?>
+                                        <span class="race-name"><?php echo esc_html($race->Name); ?>:</span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($race->RaceDate)): ?>
+                                        <span class="race-date">
+                                            <?php echo esc_html(date_i18n('j. M', strtotime($race->RaceDate->Date))); ?> - <?php echo esc_html(date_i18n('H:i',strtotime($race->RaceDate->Date . ' ' . $race->RaceDate->Clock))); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($race->attributes()->raceDistance)): ?>
+                                        <span class="race-distance">
+                                            <?php echo esc_html(\EventorIntegration\Utilities::get_race_distance_translation($race->attributes()->raceDistance)); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <?php echo esc_html(\EventorIntegration\Utilities::get_race_distance_translation('Middle')); ?>
+                                    <?php endif; ?>
+                                    <?php 
+                                    $attrs = $race->EventCenterPosition->attributes();
+                                    if (!empty($attrs->x) && !empty($attrs->y)) {
+                                        $coordinates = (string)$attrs->y . ',' . (string)$attrs->x;
+                                        $maps_url = "https://www.google.com/maps/search/?api=1&query={$coordinates}";
+                                        ?>
+                                        <a href="<?php echo esc_url($maps_url); ?>" 
+                                           class="race-location" 
+                                           target="_blank">
+                                            <span class="dashicons dashicons-location"></span>
+                                        </a>
+                                        <?php
+                                    }
+                                    ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </header>
 
@@ -116,7 +202,9 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
             <?php if (!empty($eventor_message)): ?>
                 <div class="event-message">
                     <span class="dashicons dashicons-megaphone" style="color: coral; font-size: xx-large;"></span>
-                    <p><?php echo nl2br(esc_html(trim($eventor_message))); ?></p>
+                    <p><?php 
+                    echo nl2br(\EventorIntegration\Utilities::convert_urls_to_links($eventor_message)); 
+                    ?></p>
                 </div>
             <?php endif; ?>
 
@@ -184,7 +272,6 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
                                )); ?>">
                                 <span class="dashicons dashicons-media-document"></span>
                                 <span class="document-name"><?php echo esc_html($doc['name']); ?></span>
-                                <span class="document-type"><?php echo esc_html($doc['type']); ?></span>
                             </a>
                         <?php endforeach; ?>
                     </div>
