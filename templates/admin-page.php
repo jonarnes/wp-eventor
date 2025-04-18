@@ -107,6 +107,23 @@
                     </p>
                 </td>
             </tr>
+            <tr>
+                <th scope="row">
+                    <label for="eventor_integration_cache_ttl"><?php esc_html_e('Cache TTL (hours)', 'eventor-integration'); ?></label>
+                </th>
+                <td>
+                    <input type="number" 
+                           id="eventor_integration_cache_ttl" 
+                           name="eventor_integration_cache_ttl" 
+                           value="<?php echo esc_attr(get_option('eventor_integration_cache_ttl', 24)); ?>" 
+                           min="1" 
+                           max="168" 
+                           class="small-text">
+                    <p class="description">
+                        <?php esc_html_e('How long to cache API responses (1-168 hours)', 'eventor-integration'); ?>
+                    </p>
+                </td>
+            </tr>
         </table>
 
         <?php submit_button(); ?>
@@ -115,12 +132,18 @@
     <hr>
 
     <h2><?php esc_html_e('Cache Management', 'eventor-integration'); ?></h2>
-    <p><?php esc_html_e('Clear the cached organization data if you need to refresh the information.', 'eventor-integration'); ?></p>
+    <p><?php esc_html_e('Clear the cached data if you need to refresh the information.', 'eventor-integration'); ?></p>
     
-    <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
-        <input type="hidden" name="action" value="eventor_clear_cache">
-        <?php wp_nonce_field('eventor_clear_cache'); ?>
+    <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="margin-bottom: 1em;">
+        <input type="hidden" name="action" value="eventor_clear_org_cache">
+        <?php wp_nonce_field('eventor_clear_org_cache'); ?>
         <?php submit_button(__('Clear Organization Cache', 'eventor-integration'), 'secondary'); ?>
+    </form>
+
+    <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+        <input type="hidden" name="action" value="eventor_clear_all_caches">
+        <?php wp_nonce_field('eventor_clear_all_caches'); ?>
+        <?php submit_button(__('Clear All Eventor Caches', 'eventor-integration'), 'secondary'); ?>
     </form>
 </div> 
 <p><a href="https://www.buymeacoffee.com/jonarnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a></p>

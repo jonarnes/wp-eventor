@@ -151,8 +151,32 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
                                 esc_html_e($domain, 'eventor-integration'); ?>
                                </a>)
                         <?php endif; ?>
-
                     </div>
+                    <?php 
+                    // Get competitor count
+                    try {
+                        $competitor_count = $api->get_competitor_count($event->EventId);
+                        if ($competitor_count && isset($competitor_count->CompetitorCount)) {
+                            $count = (int)$competitor_count->CompetitorCount->attributes()->numberOfEntries;
+                            if ($count > 0) {
+                                echo '<div class="competitor-count">';
+                                echo '<span class="dashicons dashicons-groups"></span>';
+                                echo sprintf(
+                                    _n(
+                                        '%d påmeldt',
+                                        '%d påmeldte',
+                                        $count,
+                                        'eventor-integration'
+                                    ),
+                                    $count
+                                );
+                                echo '</div>';
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Silently handle the error
+                    }
+                    ?>
                     <?php 
                     // Get all EventRace elements from the root level
                     $races = $event->xpath('.//EventRace');

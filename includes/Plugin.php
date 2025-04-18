@@ -28,7 +28,7 @@ class Plugin {
     public function render_events_shortcode($atts) {
         // Convert shortcode attributes to match plugin settings
         $attributes = shortcode_atts([
-            'organisation_ids' => get_option('eventor_integration_organisation_ids'),
+            'organisation_ids' => '',  // Changed from get_option to empty string
             'days_back' => get_option('eventor_integration_days_back', 30),
             'days_forward' => get_option('eventor_integration_days_forward', 90),
             'past_events_count' => get_option('eventor_integration_past_events_count', 1),
@@ -55,7 +55,11 @@ class Plugin {
         }
 
         try {
-            $events = $this->api->get_events($attributes);
+            $events = $this->api->get_events(
+                $attributes['days_back'],
+                $attributes['days_forward'],
+                $attributes['organisation_ids']
+            );
             $api = $this->api;
             
             // Make attributes available to template

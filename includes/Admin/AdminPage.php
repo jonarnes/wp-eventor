@@ -5,7 +5,8 @@ class AdminPage {
     public function init() {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_init', [$this, 'register_settings']);
-        add_action('admin_post_eventor_clear_cache', [$this, 'handle_clear_cache']);
+        add_action('admin_post_eventor_clear_org_cache', [$this, 'handle_clear_org_cache']);
+        add_action('admin_post_eventor_clear_all_caches', [$this, 'handle_clear_all_caches']);
     }
 
     public function add_admin_menu() {
@@ -31,6 +32,20 @@ class AdminPage {
                 }
             ]
         );
+
+        // Add cache TTL setting
+        register_setting(
+            'eventor_integration_options',
+            'eventor_integration_cache_ttl',
+            [
+                'type' => 'integer',
+                'default' => 24,
+                'sanitize_callback' => function($value) {
+                    return max(1, min(168, intval($value))); // Limit between 1 and 168 hours (1 week)
+                }
+            ]
+        );
+
         // Add a callback when settings are updated
         foreach (['api_key', 'organisation_ids', 'days_back', 'days_forward', 'past_events_count'] as $setting) {
             register_setting(
@@ -56,14 +71,14 @@ class AdminPage {
         include EVENTOR_INTEGRATION_PLUGIN_DIR . 'templates/admin-page.php';
     }
 
-    public function handle_clear_cache() {
+    public function handle_clear_org_cache() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
-        check_admin_referer('eventor_clear_cache');
+        check_admin_referer('eventor_clear_org_cache');
         
-        // Clear the cache
+        // Clear the organisation cache
         $api = new \EventorIntegration\API\EventorAPI();
         $api->clear_organisation_cache();
         
@@ -72,6 +87,34 @@ class AdminPage {
             'eventor_messages',
             'eventor_cache_cleared',
             __('Organization cache has been cleared.', 'eventor-integration'),
+            'success'
+        );
+        
+        set_transient('settings_errors', get_settings_errors(), 30);
+        
+        wp_redirect(add_query_arg([
+            'page' => 'eventor-integration',
+            'settings-updated' => 1
+        ], admin_url('options-general.php')));
+        exit;
+    }
+
+    public function handle_clear_all_caches() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
+        }
+
+        check_admin_referer('eventor_clear_all_caches');
+        
+        // Clear all caches
+        $api = new \EventorIntegration\API\EventorAPI();
+        $api->clear_all_caches();
+        
+        // Redirect back with success message
+        add_settings_error(
+            'eventor_messages',
+            'eventor_all_caches_cleared',
+            __('All Eventor caches have been cleared.', 'eventor-integration'),
             'success'
         );
         
