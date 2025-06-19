@@ -222,17 +222,17 @@ class Utilities {
                                 <div class="message-short">
                                     <?php echo nl2br(esc_html(substr($eventor_message, 0, $message_length))); ?>
                                     <?php if (strlen($eventor_message) > $message_length): ?>
-                                        ... <button class="expand-message" aria-expanded="false">
-                                            <?php esc_html_e('mer...', 'eventor-integration'); ?>
-                                        </button>
+                                        ... <a class="expand-message" aria-expanded="false" href="#event-message">
+                                                <?php esc_html_e('mer...', 'eventor-integration'); ?>
+                                            </a>
                                     <?php endif; ?>
                                 </div>
                                 <?php if (strlen($eventor_message) > $message_length): ?>
                                     <div class="message-full" hidden>
                                         <?php echo nl2br(self::convert_urls_to_links($eventor_message)); ?>
-                                        <button class="collapse-message">
+                                        <a class="collapse-message" aria-expanded="true">
                                             <?php esc_html_e('minimér', 'eventor-integration'); ?>
-                                        </button>
+                                        </a>
                                     </div>
                                 <?php endif; ?>
                             </div>

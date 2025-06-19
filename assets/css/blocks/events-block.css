@@ -101,6 +101,8 @@
     transform: translate(-50%, -50%);
     transition: transform 0.3s ease, z-index 0s;
     z-index: 1;
+    width: 80px;
+    height: 80px;
 }
 
 /* Stack multiple logos with offset - first logo centered */
@@ -124,6 +126,7 @@
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
+    max-width: unset;
 }
 
 .organizer-names {
@@ -647,6 +650,8 @@
     border:none;
     background:none;
     text-decoration:underline;
+    color: black;
+    cursor: pointer;
 }
 
 .competitor-count {
