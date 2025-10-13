@@ -44,6 +44,178 @@ $org_url = !empty($event->WebURL) ? $event->WebURL :
           (is_object($organizer) && !empty($organizer->WebURL) ? $organizer->WebURL : '');
 ?>
 
+<?php
+// Generate schema.org structured data for the event
+$schema_data = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Event',
+    'name' => (string)$event->Name,
+    'description' => !empty($eventor_message) ? strip_tags($eventor_message) : '',
+    'startDate' => (string)$event->StartDate->Date,
+    'eventStatus' => 'https://schema.org/EventScheduled',
+    'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode'
+];
+
+// Add end date if different from start date
+if (!empty($event->FinishDate->Date) && (string)$event->FinishDate->Date !== (string)$event->StartDate->Date) {
+    $schema_data['endDate'] = (string)$event->FinishDate->Date;
+}
+
+// Add start time if available
+if (!empty($event->EventRace->FirstStart->Clock)) {
+    $start_time = (string)$event->EventRace->FirstStart->Clock;
+    $start_date = (string)$event->StartDate->Date;
+    $schema_data['startDate'] = $start_date . 'T' . $start_time;
+}
+
+// Add end time if available and different from start
+if (!empty($event->EventRace->LastStart->Clock) && 
+    (string)$event->EventRace->LastStart->Clock !== (string)$event->EventRace->FirstStart->Clock) {
+    $end_time = (string)$event->EventRace->LastStart->Clock;
+    $end_date = !empty($event->FinishDate->Date) ? (string)$event->FinishDate->Date : (string)$event->StartDate->Date;
+    $schema_data['endDate'] = $end_date . 'T' . $end_time;
+}
+
+// Add location information
+if (!empty($event->Arena->Name) || !empty($event->Arena->Address->City)) {
+    $location = [
+        '@type' => 'Place',
+        'name' => !empty($event->Arena->Name) ? (string)$event->Arena->Name : ''
+    ];
+    
+    if (!empty($event->Arena->Address->City)) {
+        $location['address'] = [
+            '@type' => 'PostalAddress',
+            'addressLocality' => (string)$event->Arena->Address->City
+        ];
+    }
+    
+    // Add coordinates if available
+    if (!empty($event->EventRace->EventCenterPosition)) {
+        $attrs = $event->EventRace->EventCenterPosition->attributes();
+        if (!empty($attrs->x) && !empty($attrs->y)) {
+            $location['geo'] = [
+                '@type' => 'GeoCoordinates',
+                'latitude' => (string)$attrs->y,
+                'longitude' => (string)$attrs->x
+            ];
+        }
+    }
+    
+    $schema_data['location'] = $location;
+}
+
+// Add organizer information
+if (!empty($organizers)) {
+    $organizer_data = [];
+    foreach ($organizers as $organizer) {
+        $organizer_data[] = [
+            '@type' => 'Organization',
+            'name' => $organizer['name'],
+            'url' => 'https://eventor.orientering.no/Organisation/Show/' . $organizer['id'],
+            'logo' => $organizer['logo_url']
+        ];
+    }
+    $schema_data['organizer'] = count($organizer_data) === 1 ? $organizer_data[0] : $organizer_data;
+}
+
+// Add event URL
+if (!empty($event->EventId)) {
+    $schema_data['url'] = 'https://eventor.orientering.no/Events/Show/' . (string)$event->EventId;
+}
+
+// Add offers (registration information)
+$offers = [
+    '@type' => 'Offer',
+    'url' => 'https://eventor.orientering.no/Events/Show/' . (string)$event->EventId,
+    'availability' => 'https://schema.org/InStock',
+    'validFrom' => (string)$event->StartDate->Date,
+    'price' => '0',
+    'priceCurrency' => 'NOK'
+];
+
+// Add competitor count if available
+try {
+    $competitor_count = $api->get_competitor_count($event->EventId);
+    if ($competitor_count && isset($competitor_count->CompetitorCount)) {
+        $count = (int)$competitor_count->CompetitorCount->attributes()->numberOfEntries;
+        if ($count > 0) {
+            $offers['availability'] = 'https://schema.org/LimitedAvailability';
+            $schema_data['maximumAttendeeCapacity'] = $count;
+        }
+    }
+} catch (\Exception $e) {
+    // Silently handle the error
+}
+
+$schema_data['offers'] = $offers;
+
+// Add event status if cancelled
+if (!empty($event->EventStatusId) && (int)$event->EventStatusId === 7) {
+    $schema_data['eventStatus'] = 'https://schema.org/EventCancelled';
+}
+
+// Add classification if available
+if (isset($event->EventClassificationId)) {
+    $classification = \EventorIntegration\Utilities::get_classification_translation($event->EventClassificationId);
+    if (!empty($classification)) {
+        $schema_data['eventType'] = $classification;
+    }
+}
+
+// Add sport information
+$schema_data['sport'] = 'Orienteering';
+
+// Add race information if available
+$races = $event->xpath('.//EventRace');
+if (count($races) > 0) {
+    $race_info = [];
+    foreach ($races as $race) {
+        $race_data = [
+            '@type' => 'SportsEvent'
+        ];
+        
+        if (!empty($race->Name)) {
+            $race_data['name'] = (string)$race->Name;
+        }
+        
+        if (!empty($race->RaceDate)) {
+            $race_data['startDate'] = (string)$race->RaceDate->Date;
+        }
+        
+        if (!empty($race->attributes()->raceDistance)) {
+            $race_data['sport'] = \EventorIntegration\Utilities::get_race_distance_translation($race->attributes()->raceDistance);
+        }
+        
+        $race_info[] = $race_data;
+    }
+    
+    if (count($race_info) === 1) {
+        $schema_data = array_merge($schema_data, $race_info[0]);
+    }
+}
+
+// Add additional event properties
+$schema_data['inLanguage'] = 'no';
+$schema_data['audience'] = [
+    '@type' => 'Audience',
+    'audienceType' => 'Orienteering enthusiasts'
+];
+?>
+
+<script type="application/ld+json">
+<?php 
+// Ensure proper JSON encoding with error handling
+$json_output = json_encode($schema_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+if ($json_output === false) {
+    error_log('Schema.org JSON encoding failed: ' . json_last_error_msg());
+    echo '{}';
+} else {
+    echo $json_output;
+}
+?>
+</script>
+
 <div class="eventor-single-event">
     <article class="eventor-event-card">
         <!-- Event Header -->

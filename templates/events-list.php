@@ -48,7 +48,7 @@ $GLOBALS['eventor_layout'] = $layout;
         <?php endforeach; ?>
     <?php else: ?>
         <div class="eventor-event past no-events">
-            <p><?php esc_html_e('Ingen tidligere arrangementer å vise.', 'eventor-integration'); ?></p>
+        <p><?php esc_html_e('Ingen arrangementer å vise i perioden. Se <a href="https://eventor.orientering.no/Events" target="_blank">Eventor</a> for flere arrangementer.', 'eventor-integration'); ?></p>
         </div>
     <?php endif; ?>
 
@@ -58,7 +58,7 @@ $GLOBALS['eventor_layout'] = $layout;
         Utilities::render_event($next_event, $api, 'featured');
     else: ?>
         <div class="eventor-event no-events">
-            <p><?php esc_html_e('Ingen kommende arrangementer å vise.', 'eventor-integration'); ?></p>
+            <p><?php esc_html_e('Ingen arrangementer å vise i perioden. Se <a href="https://eventor.orientering.no/Events" target="_blank">Eventor</a> for flere arrangementer.', 'eventor-integration'); ?></p>
         </div>
     <?php endif; ?>
 
