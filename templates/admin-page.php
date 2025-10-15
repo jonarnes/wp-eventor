@@ -73,7 +73,7 @@
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="eventor_integration_past_events_count"><?php esc_html_e('Number of past events', 'eventor-integration'); ?></label>
+                    <label for="eventor_integration_past_events_count"><?php esc_html_e('Number of past event days', 'eventor-integration'); ?></label>
                 </th>
                 <td>
                     <input type="number" 
@@ -84,7 +84,7 @@
                            max="10" 
                            class="small-text">
                     <p class="description">
-                        <?php esc_html_e('Number of past events to display (0-10)', 'eventor-integration'); ?>
+                        <?php esc_html_e('Number of past event days to display - all events from the same day will be shown (0-10)', 'eventor-integration'); ?>
                     </p>
                 </td>
             </tr>

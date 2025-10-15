@@ -26,9 +26,30 @@ usort($past_events, function($a, $b) {
 
 $past_events = array_reverse($past_events);
 
-// Limit past events to 1   
-$past_events = array_slice($past_events, 0, get_option('eventor_integration_past_events_count', 1));
-$past_events = array_reverse($past_events);
+// Group past events by day and limit to specified number of days
+$past_events_count = get_option('eventor_integration_past_events_count', 1);
+$grouped_past_events = [];
+$unique_dates = [];
+
+foreach ($past_events as $event) {
+    $event_date = new DateTime($event->StartDate->Date);
+    $date_key = $event_date->format('Y-m-d');
+    
+    if (!isset($grouped_past_events[$date_key])) {
+        $grouped_past_events[$date_key] = [];
+        $unique_dates[] = $date_key;
+    }
+    $grouped_past_events[$date_key][] = $event;
+}
+
+// Limit to the specified number of days (most recent days first)
+$unique_dates = array_slice($unique_dates, 0, $past_events_count);
+
+// Flatten the grouped events back into a single array, maintaining chronological order within each day
+$past_events = [];
+foreach ($unique_dates as $date) {
+    $past_events = array_merge($past_events, $grouped_past_events[$date]);
+}
 
 // Sort upcoming events chronologically
 usort($upcoming_events, function($a, $b) {
