@@ -65,6 +65,9 @@ class EventorEventsBlock {
                 ]
             ],
             'render_callback' => function($attributes) {
+                // Enqueue the block style when rendering (required for render_callback blocks)
+                wp_enqueue_style('eventor-events-block');
+                
                 // Convert camelCase attributes to snake_case
                 $converted_atts = [];
                 if (isset($attributes['organisationIds'])) {

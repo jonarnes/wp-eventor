@@ -97,6 +97,14 @@ class Plugin {
     }
 
     public function enqueue_styles() {
+        // Enqueue the block CSS (also works for shortcodes)
+        wp_enqueue_style(
+            'eventor-events-block',
+            EVENTOR_INTEGRATION_PLUGIN_URL . 'assets/css/blocks/events-block.css',
+            [],
+            EVENTOR_INTEGRATION_VERSION
+        );
+
         // Generate the CSS content
         ob_start();
         $css = ob_get_clean();

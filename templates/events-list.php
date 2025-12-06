@@ -67,10 +67,6 @@ $GLOBALS['eventor_layout'] = $layout;
         <?php foreach ($past_events as $event): ?>
             <?php Utilities::render_event($event, $api, 'past'); ?>
         <?php endforeach; ?>
-    <?php else: ?>
-        <div class="eventor-event past no-events">
-        <p><?php esc_html_e('Ingen arrangementer å vise i perioden. Se <a href="https://eventor.orientering.no/Events" target="_blank">Eventor</a> for flere arrangementer.', 'eventor-integration'); ?></p>
-        </div>
     <?php endif; ?>
 
     <!-- Next Upcoming Event (Featured) -->
