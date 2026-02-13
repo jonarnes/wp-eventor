@@ -10,11 +10,13 @@ TEMP_DIR=$(mktemp -d)
 echo "Building ${PLUGIN_NAME} version ${VERSION}..."
 
 # Copy files to temp directory, excluding unwanted files
+# Note: eventor-logos cache is created at runtime in wp-content/uploads/, not in the plugin zip
 rsync -av \
   --exclude='node_modules' \
   --exclude='.git' \
   --exclude='.gitignore' \
   --exclude='.distignore' \
+  --exclude='.cursor' \
   --exclude='package.json' \
   --exclude='package-lock.json' \
   --exclude='assets/js/blocks/events-block.js' \
