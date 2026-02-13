@@ -7,13 +7,13 @@ namespace EventorIntegration;
  */
 class ImageProxy {
     const CACHE_TTL_DAYS = 7;
-    const ALLOWED_TYPES = ['LargeIcon', 'smallIcon'];
+    const ALLOWED_TYPES = ['LargeIcon', 'SmallIcon'];
 
     /**
      * Get the proxy URL for an organisation logotype.
      *
      * @param int|string $organisation_id Organisation ID (positive integer).
-     * @param string     $type            'LargeIcon' or 'smallIcon'.
+     * @param string     $type            'LargeIcon' or 'SmallIcon'.
      * @return string Proxy URL to use in img src.
      */
     public static function get_proxy_url($organisation_id, $type = 'LargeIcon') {

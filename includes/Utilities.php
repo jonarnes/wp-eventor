@@ -134,7 +134,7 @@ class Utilities {
                         $org_data = $api->get_organisation($event->Organiser->OrganisationId);
                         if ($org_data && !empty($org_data->Name)):
                             global $eventor_layout;
-                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, 'smallIcon');
+                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, 'SmallIcon');
                 ?>
                     <?php if ($eventor_layout === 'dense'): ?>
                         <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_html($org_data->Name); ?>"> 
@@ -153,7 +153,7 @@ class Utilities {
                     try {
                         $org_data = $api->get_organisation($event->Organiser->OrganisationId);
                         if ($org_data && !empty($org_data->Name)):
-                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, $eventor_layout === 'rich' ? 'LargeIcon' : 'smallIcon');
+                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, $eventor_layout === 'rich' ? 'LargeIcon' : 'SmallIcon');
                 ?>
                     <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_html($org_data->Name); ?>">
                 <?php 
