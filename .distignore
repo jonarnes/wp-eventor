@@ -1,0 +1,37 @@
+# Development dependencies
+node_modules/
+package.json
+package-lock.json
+
+# Source files (only built files should be included)
+assets/js/blocks/events-block.js
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Build artifacts and temporary files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.map
+
+# Documentation (optional - remove if you want to include docs)
+# docs/
+
+# Development files
+.env
+.env.local
+.env.*.local
+

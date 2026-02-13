@@ -21,7 +21,7 @@ if (!empty($event->Organiser)) {
                 $organizers[] = array(
                     'id' => (string)$org->OrganisationId,
                     'name' => (string)$org->Name,
-                    'logo_url' => 'https://eventor.orientering.no/Organisation/Logotype/' . (string)$org->OrganisationId . '?type=LargeIcon',
+                    'logo_url' => \EventorIntegration\ImageProxy::get_proxy_url((string)$org->OrganisationId, 'LargeIcon'),
                 );
             }
         } else {
@@ -30,7 +30,7 @@ if (!empty($event->Organiser)) {
             $organizers[] = array(
                 'id' => (string)$org->OrganisationId,
                 'name' => (string)$org->Name,
-                'logo_url' => 'https://eventor.orientering.no/Organisation/Logotype/' . (string)$org->OrganisationId . '?type=LargeIcon',
+                'logo_url' => \EventorIntegration\ImageProxy::get_proxy_url((string)$org->OrganisationId, 'LargeIcon'),
             );
         }
     }
@@ -112,7 +112,7 @@ if (!empty($organizers)) {
         $organizer_data[] = [
             '@type' => 'Organization',
             'name' => $organizer['name'],
-            'url' => 'https://eventor.orientering.no/Organisation/Show/' . $organizer['id'],
+            'url' => EVENTOR_BASE_URL . '/Organisation/Show/' . $organizer['id'],
             'logo' => $organizer['logo_url']
         ];
     }
@@ -121,13 +121,13 @@ if (!empty($organizers)) {
 
 // Add event URL
 if (!empty($event->EventId)) {
-    $schema_data['url'] = 'https://eventor.orientering.no/Events/Show/' . (string)$event->EventId;
+    $schema_data['url'] = EVENTOR_BASE_URL . '/Events/Show/' . (string)$event->EventId;
 }
 
 // Add offers (registration information)
 $offers = [
     '@type' => 'Offer',
-    'url' => 'https://eventor.orientering.no/Events/Show/' . (string)$event->EventId,
+    'url' => EVENTOR_BASE_URL . '/Events/Show/' . (string)$event->EventId,
     'availability' => 'https://schema.org/InStock',
     'validFrom' => (string)$event->StartDate->Date,
     'price' => '0',
@@ -265,7 +265,7 @@ if ($json_output === false) {
                     <div class="title-row">
                         <h2 class="event-title">
                             <?php if (!empty($event->EventId)): ?>
-                                <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
+                                <a href="<?php echo esc_url(EVENTOR_BASE_URL . '/Events/Show/' . $event->EventId); ?>" 
                                    target="_blank">
                             <?php endif; ?>
                             <?php echo esc_html($event->Name); ?>
@@ -476,14 +476,14 @@ if ($json_output === false) {
 
             <!-- Action Buttons -->
             <div class="event-actions">
-               <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
-                class="action-button primary" 
+                <a href="<?php echo esc_url(EVENTOR_BASE_URL . '/Events/Show/' . $event->EventId); ?>"
+                    class="action-button primary"
                     target="_blank">
-                    <img src="https://eventor.orientering.no/Organisation/Logotype/2?type=smallIcon" 
-                                     alt="" 
-                                     class="eventor-icon"
-                                     width="16" 
-                                     height="16">                    
+                    <img src="<?php echo esc_url(\EventorIntegration\ImageProxy::get_proxy_url(2, 'SmallIcon')); ?>"
+                        alt="<?php esc_attr_e('Eventor', 'eventor-integration'); ?>"
+                        class="eventor-icon"
+                        width="16"
+                        height="16">
                     <?php esc_html_e('Eventor', 'eventor-integration'); ?>
                 </a>
                 <?php if (!empty($coordinates)): ?>

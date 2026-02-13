@@ -18,6 +18,8 @@ class Plugin {
         // Add actions
         add_action('init', [$this, 'register_shortcodes']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
+        add_action('wp_ajax_eventor_image_proxy', [ImageProxy::class, 'serve_image']);
+        add_action('wp_ajax_nopriv_eventor_image_proxy', [ImageProxy::class, 'serve_image']);
     }
 
     public function register_shortcodes() {

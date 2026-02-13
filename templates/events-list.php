@@ -75,7 +75,7 @@ $GLOBALS['eventor_layout'] = $layout;
         Utilities::render_event($next_event, $api, 'featured');
     else: ?>
         <div class="eventor-event no-events">
-            <p><?php esc_html_e('Ingen arrangementer å vise i perioden. Se <a href="https://eventor.orientering.no/Events" target="_blank">Eventor</a> for flere arrangementer.', 'eventor-integration'); ?></p>
+            <p><?php echo wp_kses_post(sprintf(__('Ingen arrangementer å vise i perioden. Se <a href="%s" target="_blank" rel="noopener">Eventor</a> for flere arrangementer.', 'eventor-integration'), esc_url(EVENTOR_BASE_URL . '/Events'))); ?></p>
         </div>
     <?php endif; ?>
 

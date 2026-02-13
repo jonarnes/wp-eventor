@@ -134,7 +134,7 @@ class Utilities {
                         $org_data = $api->get_organisation($event->Organiser->OrganisationId);
                         if ($org_data && !empty($org_data->Name)):
                             global $eventor_layout;
-                            $image_url = 'https://eventor.orientering.no/Organisation/Logotype/' . esc_attr($event->Organiser->OrganisationId);
+                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, 'smallIcon');
                 ?>
                     <?php if ($eventor_layout === 'dense'): ?>
                         <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_html($org_data->Name); ?>"> 
@@ -153,10 +153,7 @@ class Utilities {
                     try {
                         $org_data = $api->get_organisation($event->Organiser->OrganisationId);
                         if ($org_data && !empty($org_data->Name)):
-                            $image_url = 'https://eventor.orientering.no/Organisation/Logotype/' . esc_attr($event->Organiser->OrganisationId);
-                            if ($eventor_layout === 'rich') {
-                                $image_url .= '?type=LargeIcon';
-                            }
+                            $image_url = \EventorIntegration\ImageProxy::get_proxy_url($event->Organiser->OrganisationId, $eventor_layout === 'rich' ? 'LargeIcon' : 'smallIcon');
                 ?>
                     <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_html($org_data->Name); ?>">
                 <?php 
@@ -167,7 +164,7 @@ class Utilities {
                 <div class="event-content-text">
                     <span class="event-heading">
                         <?php if (!empty($event->EventId)): ?>
-                            <a href="https://eventor.orientering.no/Events/Show/<?php echo esc_attr($event->EventId); ?>" 
+                            <a href="<?php echo esc_url(EVENTOR_BASE_URL . '/Events/Show/' . $event->EventId); ?>" 
                                target="_blank">                                
                         <?php endif; ?>
                         <?php echo esc_html($event->Name); ?>

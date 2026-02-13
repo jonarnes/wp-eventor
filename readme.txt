@@ -101,4 +101,4 @@ Initial release
 
 == Privacy Policy ==
 
-This plugin connects to Eventor (eventor.orientering.no) to fetch event data. No personal data is collected or stored by the plugin itself.
+This plugin connects to Eventor (eventor-norway.orientering.se) to fetch event data. No personal data is collected or stored by the plugin itself.

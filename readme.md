@@ -1,6 +1,6 @@
 # Eventor Integration
 
-This plugin integrates eventor.orientering.no with WordPress and displays events in a custom Gutenberg block or using a shortcode.
+This plugin integrates Eventor (eventor-norway.orientering.se) with WordPress and displays events in a custom Gutenberg block or using a shortcode.
 
 ## Features
 
@@ -26,7 +26,7 @@ The Gutenberg block is used to display the events list block in the editor. Mult
 
 ## Eventor API
 
-The Eventor API is used to fetch the events from eventor.orientering.no. You'll need to get an API key from Eventor.no to use this plugin. You'll find this on eventor.orientering.no under the "Administration" tab if you have sufficient rights.
+The Eventor API is used to fetch the events from eventor-norway.orientering.se. You'll need to get an API key from Eventor to use this plugin. You'll find this on eventor-norway.orientering.se under the "Administration" tab if you have sufficient rights.
 
 ## Screenshots
 

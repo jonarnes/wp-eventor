@@ -1,20 +1,19 @@
 <?php
 namespace EventorIntegration\API;
 
-/** 
- * https://eventor.orientering.no/api/competitorcount?organisationIds=303&eventids=20955
- *  - hente antall deltakere på en bestemt arrangement
- * 
- * 
-*/
-
+/**
+ * Eventor API client.
+ * Example: EVENTOR_BASE_URL . '/api/competitorcount?organisationIds=303&eventids=20955'
+ */
 
 class EventorAPI {
-    private $api_url = 'https://eventor.orientering.no/api/';
+    private $api_url;
+
     private $api_key;
     private $cache_ttl;
 
     public function __construct() {
+        $this->api_url = (defined('EVENTOR_BASE_URL') ? EVENTOR_BASE_URL : 'https://eventor-norway.orientering.se') . '/api/';
         $this->api_key = get_option('eventor_integration_api_key');
         $this->cache_ttl = get_option('eventor_integration_cache_ttl', 24) * HOUR_IN_SECONDS;
     }

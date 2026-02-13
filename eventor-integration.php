@@ -23,6 +23,8 @@ if (!defined('WPINC')) {
 define('EVENTOR_INTEGRATION_VERSION', '1.0.7');
 define('EVENTOR_INTEGRATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('EVENTOR_INTEGRATION_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('EVENTOR_BASE_URL', 'https://eventor-norway.orientering.se');
+define('EVENTOR_LOGO_ORIGIN_BASE', 'https://eventornorge.blob.core.windows.net/organisationlogos');
 
 // Autoloader for classes
 spl_autoload_register(function ($class) {
